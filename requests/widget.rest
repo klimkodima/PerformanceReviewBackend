@@ -1,0 +1,49 @@
+GET http://localhost:3001/api/v2/widget
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iklnb3IgRWdvcm92IiwiaWQiOjEsImlhdCI6MTY2MDExNTM3MSwiZXhwIjoxNjYwOTc5MzcxfQ.v9WHhYIfLs_aUZravaQHeyj1ls5wqZtVBuCsyFh_Zk8
+###
+GET http://localhost:3001/api/v2/user
+
+###
+POST http://localhost:3001/api/v2/user 
+content-type: application/json
+
+{
+      "fullName": "A Shishkin",
+    "username": "A Shishkin",
+    "email": "as.shishkin@gpsolutions.com",
+    "enabled": false,
+    "roleName": "AUDITOR",
+    "level": "TRAINEE",
+    "pending": false,
+    "jiraAccountId": "12866hg",
+    "worksFrom": "2022-03-26",
+    "thirdParty": false,
+    "password": "secret"
+}
+
+### GET http://localhost:3003/api/users/1
+
+### GET http://localhost:3003/api/users/1?read=true
+
+### GET http://localhost:3001/api/users/1?read=false
+
+### POST http://localhost:3000/api/v2/user/ content-type: application/json
+
+{
+"username": "klimkodima@tut.by",
+"password": "secret"
+}
+
+### PUT http://localhost:3001/api/users/klimkodima@tut.by content-type: application/json
+
+{
+"username": "klimkodima@tut.by", "name": "Arto Hellas", "password": "secret"
+}
+
+### DELETE http://localhost:3001/api/users/5
+
+### POST http://localhost:3001/api/users/ HTTP/1.1 content-type: application/json
+
+{
+"username": "klimkodima", "name": "Arto Hellas12", "password": "secret"
+}

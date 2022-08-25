@@ -1,0 +1,70 @@
+GET http://localhost:3001/api/v2/user/current
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iklnb3IgRWdvcm92IiwiaWQiOjEsImlhdCI6MTY2MDExNTM3MSwiZXhwIjoxNjYwOTc5MzcxfQ.v9WHhYIfLs_aUZravaQHeyj1ls5wqZtVBuCsyFh_Zk8
+###
+GET http://localhost:3001/api/v2/user
+
+###
+POST http://localhost:3001/api/v2/user 
+content-type: application/json
+
+{
+    "fullName": "Egor Egorov",
+    "username": "Egor Egorov",
+    "email": "e.egorov@gpsolutions.com",
+    "enabled": true,
+    "roleName": "ADMIN",
+    "teamId": 0,
+    "teamName": "",
+    "level": "SENIOR",
+    "pending": false,
+    "jiraAccountId": "12866hg",
+    "worksFrom": "2022-03-26",
+    "thirdParty": false,
+    "password": "secret11"
+}
+
+###
+POST http://localhost:3001/api/v2/user 
+content-type: application/json
+
+{
+    "fullName": "Elena Egorova",
+    "username": "Elena Egorova",
+    "email": "e.egorova@gpsolutions.com",
+    "enabled": true,
+    "roleName": "AUDITOR",
+    "teamId": 1,
+    "teamName": "Alpha",
+    "worksFrom": "2022-03-26",
+    "level": "SENIOR",
+    "pending": false,
+    "jiraAccountId": "12866hg",
+    "thirdParty": false,
+    "password": "secret11"
+}
+
+###
+POST http://localhost:3001/api/v2/user 
+content-type: application/json
+
+{
+    "fullName": "Elen Egorova",
+    "username": "Elen Egorova",
+    "email": "el.egorova@gpsolutions.com",
+    "enabled": true,
+    "roleName": "AUDITOR",
+    "teamId": 1,
+    "teamName": "Alpha",
+    "worksFrom": "2022-03-26",
+    "level": "SENIOR",
+    "pending": false,
+    "jiraAccountId": "12866hg",
+    "thirdParty": false,
+    "password": "secret11"
+}
+
+
+
+### 
+DELETE http://localhost:3001/api/v2/user/2
+

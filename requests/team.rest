@@ -1,0 +1,19 @@
+GET http://localhost:3001/api/v2/team
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iklnb3IgRWdvcm92IiwiaWQiOjEsImlhdCI6MTY2MDExNTM3MSwiZXhwIjoxNjYwOTc5MzcxfQ.v9WHhYIfLs_aUZravaQHeyj1ls5wqZtVBuCsyFh_Zk8
+
+###
+POST http://localhost:3001/api/v2/team 
+content-type: application/json
+
+{
+    "teamName": "Alpha"
+}
+
+###
+POST http://localhost:3001/api/v2/team 
+content-type: application/json
+
+{
+    "teamName": "X-Rays"
+}
+

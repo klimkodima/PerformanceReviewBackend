@@ -1,0 +1,12 @@
+### 
+POST http://localhost:3001/api/v2/auth/login
+content-type: application/json
+
+{
+"username": "Egor Egorov",
+"password": "secret"
+}
+
+### 
+DELETE http://localhost:3001/api/v2/auth/login
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImtsaW1rb2RpbWFAdHV0LmJ5IiwibmFtZSI6IkFydG8gSGVsbGFzIiwiaWQiOjEsImlhdCI6MTY0MzExMjEwOSwiZXhwIjoxNjQzOTc2MTA5fQ.dwFUbuRefqLyJrvPfuQc3Jb_0euW6ucajLegYNFMI2U
