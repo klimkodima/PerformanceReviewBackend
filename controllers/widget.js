@@ -1,7 +1,6 @@
 const router = require('express').Router()
-const { Op } = require("sequelize");
+const { Op } = require("sequelize")
 const { User, Activity } = require('../models')
-const { SALTROUNDS } = require('../util/config')
 
 const WIDGETS = {
   availableWidgets: [
@@ -115,36 +114,11 @@ router.get('/ContentAuditor', async (req, res) => {
   }
 })
 
-const activitiesPercentage = {
-  totalTimeSpend: 225600,
-  labels: [
-    {
-      name: 'Audits',
-      totalTimeSpend: 90000,
-      percentage: 39.8936170212766
-    },
-    {
-      name: 'Meetings',
-      totalTimeSpend: 55800,
-      percentage: 24.73404255319149
-    },
-    {
-      name: 'Others',
-      totalTimeSpend: 37800,
-      percentage: 16.75531914893617
-    },
-    {
-      name: 'Support',
-      totalTimeSpend: 42000,
-      percentage: 18.617021276595743
-    }
-  ]
-};
-
 router.get('/ActivitiesPercentage', async (req, res) => {
   try {
     const activitiesPercentages = await Activity.findAll(
       {
+        attributes: ['name', 'timeSpend'],
         where: {
           [Op.and]:
             [{ userId: req.query.auditorsIds },
@@ -156,14 +130,26 @@ router.get('/ActivitiesPercentage', async (req, res) => {
             }]
         }
       }
-    )
-    const totalTimeSpend = 
-    activitiesPercentages.reduce((acc, act) => acc + act.timeSpend, 0)
 
-    console.log(activitiesPercentages)
-    console.log(totalTimeSpend)
-    const data = {...activitiesPercentage, totalTimeSpend: totalTimeSpend}
-    res.json(data)
+    )
+    const totalTimeSpend =
+      activitiesPercentages.reduce((acc, act) => acc + act.timeSpend, 0)
+    const labels = activitiesPercentages.reduce((acc, act) => {
+      const dubl = acc.find(v => v.name === act.name)
+      if (!dubl) {
+        acc.push({
+          name: act.name,
+          totalTimeSpend: act.timeSpend,
+          percentage: act.timeSpend / totalTimeSpend * 100
+        });
+      } else {
+        dubl.totalTimeSpend = act.timeSpend + dubl.totalTimeSpend
+        dubl.percentage = dubl.totalTimeSpend / totalTimeSpend * 100
+      }
+      return acc;
+    }, [])
+
+    res.json({ labels: labels, totalTimeSpend: totalTimeSpend })
   } catch (error) {
     return res.status(400).json({ error })
   }

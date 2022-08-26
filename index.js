@@ -18,7 +18,7 @@ app.use(helmet())
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
-app.use(middleware.requestLogger)
+//app.use(middleware.requestLogger)
 
 app.use('/api/v2/widget', widgetRouter)
 app.use('/api/v2/user', usersRouter)
