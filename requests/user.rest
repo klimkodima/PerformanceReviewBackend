@@ -1,3 +1,4 @@
+
 GET http://localhost:3001/api/v2/user/current
 authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Iklnb3IgRWdvcm92IiwiaWQiOjEsImlhdCI6MTY2MDExNTM3MSwiZXhwIjoxNjYwOTc5MzcxfQ.v9WHhYIfLs_aUZravaQHeyj1ls5wqZtVBuCsyFh_Zk8
 ###
@@ -43,17 +44,18 @@ content-type: application/json
     "password": "secret11"
 }
 
+
 ###
 POST http://localhost:3001/api/v2/user 
 content-type: application/json
 
 {
-    "fullName": "Elen Egorova",
-    "username": "Elen Egorova",
+    "fullName": "Klimko Dima",
+    "username": "Klimko Dima",
     "email": "el.egorova@gpsolutions.com",
     "enabled": true,
-    "roleName": "AUDITOR",
-    "teamId": 1,
+    "roleName": "TEAMLEAD",
+    "teamId": 2,
     "teamName": "Alpha",
     "worksFrom": "2022-03-26",
     "level": "SENIOR",

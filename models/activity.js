@@ -32,6 +32,8 @@ Activity.init({
   teamId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: { model: 'teams', key: 'id' },
+
   }
 }, {
   sequelize,

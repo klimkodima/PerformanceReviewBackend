@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const { Op } = require("sequelize")
-const { User, Activity } = require('../models')
+const _ = require('lodash');
+const { User, Activity, Team } = require('../models')
+const { getTotalTime, getLabels } = require('../util/helper')
 
 const WIDGETS = {
   availableWidgets: [
@@ -14,73 +16,6 @@ const WIDGETS = {
   ],
   settingsPermission: 'WRITE'
 };
-
-const teamActivitiesPercentage =
-  [
-    {
-      "teamName": "Charlie",
-      "labels": [
-        {
-          "name": "Audits",
-          "percentage": 39.8936170212766
-        },
-        {
-          "name": "Meetings",
-          "percentage": 24.73404255319149
-        },
-        {
-          "name": "Others",
-          "percentage": 16.75531914893617
-        },
-        {
-          "name": "Support",
-          "percentage": 18.617021276595743
-        }
-      ]
-    },
-    {
-      "teamName": "X-Rays",
-      "labels": [
-        {
-          "name": "Audits",
-          "percentage": 39.8936170212766
-        },
-        {
-          "name": "Meetings",
-          "percentage": 24.73404255319149
-        },
-        {
-          "name": "Others",
-          "percentage": 16.75531914893617
-        },
-        {
-          "name": "Support",
-          "percentage": 18.617021276595743
-        }
-      ]
-    },
-    {
-      "teamName": "Alpha",
-      "labels": [
-        {
-          "name": "Audits",
-          "percentage": 39.8936170212766
-        },
-        {
-          "name": "Meetings",
-          "percentage": 24.73404255319149
-        },
-        {
-          "name": "Others",
-          "percentage": 16.75531914893617
-        },
-        {
-          "name": "Support",
-          "percentage": 18.617021276595743
-        }
-      ]
-    }
-  ]
 
 router.get('/', async (req, res) => {
   res.json(WIDGETS)
@@ -118,7 +53,7 @@ router.get('/ActivitiesPercentage', async (req, res) => {
   try {
     const activitiesPercentages = await Activity.findAll(
       {
-        attributes: ['name', 'timeSpend'],
+        attributes: ['name', 'timeSpend',],
         where: {
           [Op.and]:
             [{ userId: req.query.auditorsIds },
@@ -130,30 +65,54 @@ router.get('/ActivitiesPercentage', async (req, res) => {
             }]
         }
       }
-
     )
-    const totalTimeSpend =
-      activitiesPercentages.reduce((acc, act) => acc + act.timeSpend, 0)
-    const labels = activitiesPercentages.reduce((acc, act) => {
-      const dubl = acc.find(v => v.name === act.name)
-      if (!dubl) {
-        acc.push({
-          name: act.name,
-          totalTimeSpend: act.timeSpend,
-          percentage: act.timeSpend / totalTimeSpend * 100
-        });
-      } else {
-        dubl.totalTimeSpend = act.timeSpend + dubl.totalTimeSpend
-        dubl.percentage = dubl.totalTimeSpend / totalTimeSpend * 100
-      }
-      return acc;
-    }, [])
-
+    const totalTimeSpend = getTotalTime(activitiesPercentages)
+    const labels = getLabels(activitiesPercentages, totalTimeSpend, 'AUDITOR')
     res.json({ labels: labels, totalTimeSpend: totalTimeSpend })
   } catch (error) {
     return res.status(400).json({ error })
   }
 })
 
+router.get('/TeamActivitiesPercentage', async (req, res) => {
+  try {
+    const activities = await Activity.findAll(
+      {
+        attributes: [
+          'name',
+           'timeSpend'
+          ],
+        include: {
+          model: Team,
+          attributes: ['teamName'],
+        },
+        where: {
+          date: {
+            [Op.lte]: new Date(req.query.to),
+            [Op.gte]: new Date(req.query.from)
+          }
+        }
+      }
+    )
+
+    const teams = await Team.findAll(
+      {
+        attributes: [
+          'teamName',
+          ]
+      }
+    )
+    const data = teams.map(team => {
+      const teamActivities = activities.filter(act => act.team.teamName === team.teamName)
+      const totalTimeSpend = getTotalTime(teamActivities)
+      const labels = getLabels(teamActivities, totalTimeSpend , 'TEAM')
+      return {teamName: team.teamName, labels: labels}
+    })
+
+   res.json(data)
+  } catch (error) {
+    return res.status(400).json({ error })
+  }
+})
 
 module.exports = router
