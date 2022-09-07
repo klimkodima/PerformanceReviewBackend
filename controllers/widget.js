@@ -1,6 +1,5 @@
 const router = require('express').Router()
 const { Op } = require("sequelize")
-const _ = require('lodash');
 const { User, Activity, Team } = require('../models')
 const { getTotalTime, getLabels } = require('../util/helper')
 
@@ -102,6 +101,7 @@ router.get('/TeamActivitiesPercentage', async (req, res) => {
           ]
       }
     )
+    
     const data = teams.map(team => {
       const teamActivities = activities.filter(act => act.team.teamName === team.teamName)
       const totalTimeSpend = getTotalTime(teamActivities)

@@ -125,7 +125,7 @@ router.put('/:id', userFinder, async (req, res) => {
     req.user.fullName = req.body.fullName
     req.user.roleName = req.body.roleName
     req.user.enabled = req.body.enabled
-    const user = await req.user.save()
+    await req.user.save()
     res.status(200).end()
   } else {
     res.status(404).end()
