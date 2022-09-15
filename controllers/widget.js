@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { Op } = require("sequelize")
+const { Op } = require('sequelize')
 const { User, Activity, Team } = require('../models')
 const { getTotalTime, getLabels } = require('../util/helper')
 
@@ -14,7 +14,7 @@ const WIDGETS = {
     'TeamActivitiesPercentage'
   ],
   settingsPermission: 'WRITE'
-};
+}
 
 router.get('/', async (req, res) => {
   res.json(WIDGETS)
@@ -55,13 +55,15 @@ router.get('/ActivitiesPercentage', async (req, res) => {
         attributes: ['name', 'timeSpend',],
         where: {
           [Op.and]:
-            [{ userId: req.query.auditorsIds },
-            {
-              date: {
-                [Op.lte]: new Date(req.query.to),
-                [Op.gte]: new Date(req.query.from)
+            [
+              { userId: req.query.auditorsIds },
+              {
+                date: {
+                  [Op.lte]: new Date(req.query.to),
+                  [Op.gte]: new Date(req.query.from)
+                }
               }
-            }]
+            ]
         }
       }
     )
@@ -79,8 +81,8 @@ router.get('/TeamActivitiesPercentage', async (req, res) => {
       {
         attributes: [
           'name',
-           'timeSpend'
-          ],
+          'timeSpend'
+        ],
         include: {
           model: Team,
           attributes: ['teamName'],
@@ -98,18 +100,18 @@ router.get('/TeamActivitiesPercentage', async (req, res) => {
       {
         attributes: [
           'teamName',
-          ]
+        ]
       }
     )
-    
+
     const data = teams.map(team => {
       const teamActivities = activities.filter(act => act.team.teamName === team.teamName)
       const totalTimeSpend = getTotalTime(teamActivities)
-      const labels = getLabels(teamActivities, totalTimeSpend , 'TEAM')
-      return {teamName: team.teamName, labels: labels}
+      const labels = getLabels(teamActivities, totalTimeSpend, 'TEAM')
+      return { teamName: team.teamName, labels: labels }
     })
 
-   res.json(data)
+    res.json(data)
   } catch (error) {
     return res.status(400).json({ error })
   }

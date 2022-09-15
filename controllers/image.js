@@ -1,21 +1,26 @@
 const router = require('express').Router()
-const fs = require('fs')
-const stream = require('stream')
+const path = require('path')
 
-router.get('/:avatarUrl',(req, res) => {
-  console.log(req.params.avatarUrl)
-  const r = fs.createReadStream('path to file') // or any other way to get a readable stream
-  const ps = new stream.PassThrough() // <---- this makes a trick with stream error handling
-  stream.pipeline(
-   r,
-   ps, // <---- this makes a trick with stream error handling
-   (err) => {
+const FILES_DIR = path.join(__dirname, '../public/img/userAvatars')
+
+router.get('/:avatarUrl',(req, res, next) => {
+  const options = {
+    root: FILES_DIR,
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true
+    }
+  }
+
+  const fileName = req.params.avatarUrl
+  res.sendFile(fileName, options, function (err) {
     if (err) {
-      console.log(err) // No such file or any other kind of error
-      return res.sendStatus(400); 
+      next(err)
+    } else {
+      res.end()
     }
   })
-  ps.pipe(res) // <---- this makes a trick with stream error handling
 })
 
 module.exports = router

@@ -1,11 +1,12 @@
 const router = require('express').Router()
 const bcrypt = require('bcrypt')
+const { upload } = require('../util/fileStorage')
 const { User, Team, Session } = require('../models')
 const { SALTROUNDS } = require('../util/config')
 const sendEmail = require('../util/sendEmail')
 const { tokenExtractor } = require('../util/middleware')
 const { format } = require('date-fns')
-const generator = require('generate-password');
+const generator = require('generate-password')
 
 const userFinder = async (req, res, next) => {
   req.user = await User.findByPk(req.params.id)
@@ -26,8 +27,8 @@ router.post('/', async (req, res) => {
       return res.status(400).send({ error: 'Password validation failed: password: Path `password` (`as`) is shorter than the minimum allowed length (8).' })
     }
     req.body.password = await bcrypt.hash(req.body.password, SALTROUNDS)
-    if(!req.body.worksFrom)req.body.worksFrom = format(new Date(), 'yyyy-MM-dd')
-    
+    if (!req.body.worksFrom) req.body.worksFrom = format(new Date(), 'yyyy-MM-dd')
+
     if (req.body.teamName) {
       const team = await Team.findOne({
         where: {
@@ -45,7 +46,6 @@ router.post('/', async (req, res) => {
 
 router.get('/current', tokenExtractor, async (req, res) => {
   try {
-    const id = req.decodedToken.id
     const session = await Session.findOne({
       where: {
         userId: req.decodedToken.id
@@ -73,7 +73,7 @@ router.patch('/activate/:id', userFinder, async (req, res) => {
     req.user.roleName = req.query.role
     req.user.pending = false
     req.user.enabled = true
-    const user = await req.user.save()
+    await req.user.save()
     res.status(204).end()
   } else {
     res.status(404).end()
@@ -83,7 +83,7 @@ router.patch('/activate/:id', userFinder, async (req, res) => {
 router.patch('/disable/:id', userFinder, async (req, res) => {
   if (req.user) {
     req.user.enabled = false
-    const user = await req.user.save()
+    await req.user.save()
     res.status(204).end()
   } else {
     res.status(404).end()
@@ -97,9 +97,9 @@ router.patch('/resetpassword/:id', userFinder, async (req, res) => {
         length: 8,
         numbers: true,
         symbols: true
-      });
+      })
       req.user.password = await bcrypt.hash(password, SALTROUNDS)
-      const user = await req.user.save()
+      await req.user.save()
       sendEmail(req.user.email, password)
       res.status(204).end()
     } else {
@@ -110,15 +110,24 @@ router.patch('/resetpassword/:id', userFinder, async (req, res) => {
   }
 })
 
-router.patch('/updateavatar/:id', userFinder, async (req, res) => {
-  if (req.user) {
-    req.user.avatarUrl = `http://localhost:3001/api/v2/image/${req.user.username}`
-    const user = await req.user.save()
-    res.status(204).end()
-  } else {
-    res.status(404).end()
-  }
-})
+/* eslint-disable no-unused-vars */
+router.patch(
+  '/updateavatar/:id/:avatarUrl',
+  upload.single('avatarImage'),
+  userFinder,
+  async (req, res, next) => {
+    /* eslint-enable no-unused-vars */
+    if (req.user) {
+      req.user.avatarUrl = `http://localhost:3001/api/v2/image/${req.params.avatarUrl}`
+      await req.user.save()
+      if (!req.file || Object.keys(req.file).length === 0) {
+        return res.status(400).send('No files were uploaded.')
+      }
+      res.status(204).end()
+    } else {
+      res.status(404).end()
+    }
+  })
 
 router.put('/:id', userFinder, async (req, res) => {
   if (req.user) {

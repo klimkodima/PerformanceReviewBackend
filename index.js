@@ -14,8 +14,13 @@ const middleware = require('./util/middleware')
 const helmet = require('helmet')
 
 const app = express()
-app.use(helmet())
+app.use(helmet(({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+})))
 app.use(cors())
+//app.use(express.static(__dirname + '/public'))
+//app.use(multer({ dest:'public/img/userAvatars' }).single('avatarImage'))
 app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)

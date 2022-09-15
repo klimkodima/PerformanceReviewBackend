@@ -9,8 +9,8 @@ Session.belongsTo(User)
 //Activity.hasOne(Team, {
 //  foreignKey: 'teamId'
 //})
-Team.hasMany(Activity);
-Activity.belongsTo(Team);
+Team.hasMany(Activity)
+Activity.belongsTo(Team)
 
 module.exports = {
   User, Session, Team, Activity

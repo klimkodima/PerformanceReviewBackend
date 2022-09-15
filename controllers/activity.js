@@ -18,7 +18,7 @@ router.post('/', tokenExtractor, userFinder, async (req, res) => {
       userId: req.user.id,
       teamId: req.user.teamId
     }
-    const activity =await Activity.create(newActivity)
+    await Activity.create(newActivity)
     res.status(200).end()
   } else {
     res.status(404).end()
