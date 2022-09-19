@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer')
-const { GOOGLESECRET } = require('./config')
+const { GOOGLESECRET, USERMAIL } = require('./config')
 
 const sendEmail = (email, password) => {
   const smtpConfig = {
@@ -8,21 +8,24 @@ const sendEmail = (email, password) => {
     secure: true, // use SSL,
     // you can try with TLS, but port is then 587
     auth: {
-      user: 'klimko.dzmitry@gmail.com', // Your email id
+      user: USERMAIL, // Your email id
       pass: GOOGLESECRET // Your password
     }
   }
 
+  const from = 'gpsolutions@gmail.com'
+  const text = `Your password has been changed. 
+  Use your secret code:
+      
+  ${password} `
+
   const transporter = nodemailer.createTransport(smtpConfig)
   // replace hardcoded options with data passed (somedata)
   const mailOptions = {
-    from: 'gpsolutions@gmail.com',
+    from: from,
     to: email,
     subject: ' Password changed', // Subject line
-    text: `Your password has been changed. 
-    Use your secret code:
-        
-    ${password} `
+    text: text
   }
 
   transporter.sendMail(mailOptions, function (error, info) {

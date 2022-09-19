@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 /.idea
+/public/img
 
 #snapshots
 **/__image_snapshopts__

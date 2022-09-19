@@ -1,6 +1,7 @@
 const logger = require('./logger')
 const morgan = require('morgan')
 const jwt = require('jsonwebtoken')
+const cluster = require('cluster')
 const { User, Session } = require('../models')
 
 const tokenExtractor = (req, res, next) => {
@@ -14,6 +15,12 @@ const tokenExtractor = (req, res, next) => {
   }  else {
     res.status(401).json({ error: 'token missing' })
   }
+  next()
+}
+
+const clusterLogger = (req, res, next) => {
+  if(cluster.isWorker)
+    console.log(`Worker ${cluster.worker.id} received request`)
   next()
 }
 
@@ -88,5 +95,6 @@ module.exports = {
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
-  userFromToken
+  userFromToken,
+  clusterLogger
 }

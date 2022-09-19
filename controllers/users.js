@@ -118,7 +118,7 @@ router.patch(
   async (req, res, next) => {
     /* eslint-enable no-unused-vars */
     if (req.user) {
-      req.user.avatarUrl = `http://localhost:3001/api/v2/image/${req.params.avatarUrl}`
+      req.user.avatarUrl = `http://localhost:3001/api/v2/image/${req.fileName}`
       await req.user.save()
       if (!req.file || Object.keys(req.file).length === 0) {
         return res.status(400).send('No files were uploaded.')
